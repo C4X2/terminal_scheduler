@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 	"fmt"
+	"runtime"
 )
 
 const INFO = 
@@ -66,12 +67,13 @@ func main() {
 	flag.Parse()
 
 	println(INFO)
-	fmt.Printf("Cmd Scheduler will run all commands in the current directory\n")
+	dirz, _ := os.Getwd();
+	fmt.Printf("Cmd Scheduler will run all commands in the current directory: %s\n", dirz)
 	fmt.Printf("The following command(s) will be run every %v second(s) in order:\n", duration)
 	println(commands.String())
 	println(DIVIDER)
 
-	for q=0; q < maxIter; q++ {
+	for q:=0; q < (*maxIter); q++ {
 		println("Sleeping...")
 		time.Sleep(*duration)
 		println("Start iteration " + fmt.Sprintf("%d", q  + 1))
@@ -96,8 +98,9 @@ func main() {
 }
 
 func runCmd(cmd string) (err error) {
-	tCmd := exec.Command("cmd.exe", "/c", cmd)
-	//TODO add a commoand for linux/macOs
+	
+	tCmd := *innerCmd(cmd); 
+
 	out , err := tCmd.Output()
 	strArr := strings.Split(string(out), ("\n"))
 	for  i := 0; i < len(strArr); i++  {
@@ -106,4 +109,12 @@ func runCmd(cmd string) (err error) {
 	}
 	
 	return err
+}
+
+func innerCmd(cmd string) *exec.Cmd {
+	if runtime.GOOS == "windows"{ 
+		return exec.Command("cmd.exe", "/c", cmd)
+	} else {
+		return exec.Command("bash", "-c", cmd)
+	}
 }
