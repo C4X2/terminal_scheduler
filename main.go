@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"os"
+	"math"
 	"os/exec"
 	"strings"
 	"time"
@@ -41,7 +42,7 @@ func (arr *UserCommands) Set(value string) error {
 }
 
 func main() {
-	zeroDur, erz := time.ParseDuration("0s")
+	zeroDur, erz := time.ParseDuratio n("0s")
 	if erz != nil {
 		println("ERROR: Can not initialize application. Exiting.")
 		return
@@ -52,6 +53,7 @@ func main() {
 	flag.Var(&commands, "c", "The list of commands to run in order")
 	continueOnError := flag.Bool("e", false, "continue on error of any one command")
 	intraExecutionDuration := flag.Duration("r",zeroDur , "duration of sleep between commands")
+	maxIter := flag.Int("m", math.MaxInt, "maximum number of iterations to execute")
 
 	if (*duration) < zeroDur {
 		println("Duration flag -d cannot be negative. Exiting application.")
@@ -68,9 +70,8 @@ func main() {
 	fmt.Printf("The following command(s) will be run every %v second(s) in order:\n", duration)
 	println(commands.String())
 	println(DIVIDER)
-	q := 0
 
-	for {
+	for q=0; q < maxIter; q++ {
 		println("Sleeping...")
 		time.Sleep(*duration)
 		println("Start iteration " + fmt.Sprintf("%d", q  + 1))
@@ -91,7 +92,6 @@ func main() {
 		}
 		println("End iteration " + fmt.Sprintf("%d", q + 1))
 		println(DIVIDER)
-		q++
 	}
 }
 
