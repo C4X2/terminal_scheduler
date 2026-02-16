@@ -42,7 +42,7 @@ func (arr *UserCommands) Set(value string) error {
 }
 
 func main() {
-	zeroDur, erz := time.ParseDuratio n("0s")
+	zeroDur, erz := time.ParseDuration("0s")
 	if erz != nil {
 		println("ERROR: Can not initialize application. Exiting.")
 		return
